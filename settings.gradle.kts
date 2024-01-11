@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "RkMstrsTest"
 include(":app")
+include(":core-domain")
