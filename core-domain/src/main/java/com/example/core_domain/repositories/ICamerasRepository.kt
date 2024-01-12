@@ -8,5 +8,5 @@ interface ICamerasRepository {
     suspend fun update(): Boolean
     suspend fun getCameras(): List<CameraModel>
     fun getCamerasLive(): Flow<List<CameraModel>>
-    suspend fun setIsFavorite(camerasModel: CameraModel, value: Boolean)
+    suspend fun toggleFavorite(cameraId: Int)
 }
