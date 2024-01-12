@@ -26,6 +26,7 @@ class DoorsRepository @Inject constructor(
         val doorModels = response.map(DoorResponseModel::toModel)
 
         realm.writeBlocking {
+            this.delete(DoorObject::class)
             doorModels.map {
                 DoorObject(it)
             }.forEach {

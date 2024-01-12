@@ -15,7 +15,7 @@ import javax.inject.Inject
 class CamerasRepository @Inject constructor(
     private val realm: Realm,
     private val http: HttpClient
-): ICamerasRepository {
+) : ICamerasRepository {
     override suspend fun isEmpty(): Boolean {
         return realm.query<CameraObject>().find().isEmpty()
     }
@@ -25,6 +25,7 @@ class CamerasRepository @Inject constructor(
         val cameraModels = response.cameras.map(CameraResponseModel::toModel)
 
         realm.writeBlocking {
+            this.delete(CameraObject::class)
             cameraModels.map {
                 CameraObject(it)
             }.forEach {
@@ -45,9 +46,15 @@ class CamerasRepository @Inject constructor(
         }
     }
 
-    override suspend fun setIsFavorite(camerasModel: CameraModel, value: Boolean) {
+    override suspend fun toggleFavorite(cameraId: Int) {
         realm.writeBlocking {
-            findLatest(CameraObject(camerasModel))?.favorites = value
+            query<CameraObject>()
+                .find()
+                .find {
+                    it.id == cameraId
+                }?.apply {
+                    favorites = !this.favorites
+                }
         }
     }
 }
