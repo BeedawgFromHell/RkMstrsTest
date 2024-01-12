@@ -11,7 +11,7 @@ class CameraObject(): RealmObject {
     var id: Int = 0
     var name: String = ""
     var snapshotUrl: String = ""
-    var room: String = ""
+    var room: String? = null
     var favorites: Boolean = false
     var rec: Boolean = false
 

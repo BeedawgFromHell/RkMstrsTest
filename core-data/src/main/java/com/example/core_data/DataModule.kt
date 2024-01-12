@@ -2,6 +2,11 @@ package com.example.core_data
 
 import com.example.core_data.db.entities.CameraObject
 import com.example.core_data.db.entities.DoorObject
+import com.example.core_data.repositories.CamerasRepository
+import com.example.core_data.repositories.DoorsRepository
+import com.example.core_domain.repositories.ICamerasRepository
+import com.example.core_domain.repositories.IDoorsRepository
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,4 +26,14 @@ object DataModule {
         )
         return Realm.open(config)
     }
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class DataBindModule {
+    @Binds
+    abstract fun bindCamerasRepository(impl: CamerasRepository): ICamerasRepository
+
+    @Binds
+    abstract fun bindDoorsRepository(impl: DoorsRepository): IDoorsRepository
 }

@@ -5,8 +5,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface ICamerasRepository {
     suspend fun isEmpty(): Boolean
-    suspend fun update()
+    suspend fun update(): Boolean
     suspend fun getCameras(): List<CameraModel>
-    suspend fun getCamerasLive(): Flow<List<CameraModel>>
+    fun getCamerasLive(): Flow<List<CameraModel>>
     suspend fun setIsFavorite(camerasModel: CameraModel, value: Boolean)
 }
