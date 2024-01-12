@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$/core-data" />
             <option value="$PROJECT_DIR$/core-domain" />
             <option value="$PROJECT_DIR$/feature-cameras" />
+            <option value="$PROJECT_DIR$/feature-doors" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />

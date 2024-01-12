@@ -49,15 +49,25 @@ class DoorsRepository @Inject constructor(
 
     override suspend fun renameDoor(door: DoorModel, newName: String) {
         realm.writeBlocking {
-            val realmObject = DoorObject(door)
-            findLatest(realmObject)?.name = newName
+            query<DoorObject>()
+                .find()
+                .find {
+                    it.id == door.id
+                }?.apply {
+                    name = newName
+                }
         }
     }
 
-    override suspend fun setIsFavorite(door: DoorModel, value: Boolean) {
+    override suspend fun toggleFavorite(doorId: Int) {
         realm.writeBlocking {
-            val realmObject = DoorObject(door)
-            findLatest(realmObject)?.favorites = value
+            query<DoorObject>()
+                .find()
+                .find {
+                    it.id == doorId
+                }?.apply {
+                    favorites = !this.favorites
+                }
         }
     }
 }

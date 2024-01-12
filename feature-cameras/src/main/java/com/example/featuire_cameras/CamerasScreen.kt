@@ -18,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material3.DismissDirection
 import androidx.compose.material3.DismissValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -68,6 +69,7 @@ fun CamerasScreen(
                     })
                     SwipeToDismiss(modifier = Modifier.animateItemPlacement(),
                         state = dismissState,
+                        directions = setOf(DismissDirection.EndToStart),
                         background = {
                             Box(
                                 modifier = Modifier
@@ -106,11 +108,12 @@ private fun CameraCard(modifier: Modifier = Modifier, cameraModel: CameraModel) 
             .padding(1.dp)
             .background(Color.White, RoundedCornerShape(16.dp))
     ) {
-        Box() {
+        Box {
             AsyncImage(
                 modifier = Modifier.aspectRatio(16f / 9f),
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(cameraModel.snapshotUrl)
+                    .crossfade(true)
                     .build(),
                 contentDescription = null,
                 contentScale = ContentScale.FillWidth

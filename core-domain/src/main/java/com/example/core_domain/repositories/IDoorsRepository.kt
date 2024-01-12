@@ -9,5 +9,5 @@ interface IDoorsRepository {
     suspend fun getAllDoors(): List<DoorModel>
     fun getAllDoorsLive(): Flow<List<DoorModel>>
     suspend fun renameDoor(door: DoorModel, newName: String)
-    suspend fun setIsFavorite(door: DoorModel, value: Boolean)
+    suspend fun toggleFavorite(doorId: Int)
 }
