@@ -1,10 +1,12 @@
 package com.example.rkmstrstest
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.core_domain.models.CameraModel
+import com.example.core_domain.models.DoorModel
 import com.example.core_domain.repositories.ICamerasRepository
 import com.example.core_domain.repositories.IDoorsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,6 +24,7 @@ class MainViewModel @Inject constructor(
     val isRefreshing = mutableStateOf(false)
 
     val mappedCameras = mutableStateMapOf<String, MutableList<CameraModel>>()
+    val doors = mutableStateListOf<DoorModel>()
 
     init {
         viewModelScope.launch {
@@ -40,6 +43,13 @@ class MainViewModel @Inject constructor(
                         }
                     }
                 }
+            }
+        }
+
+        viewModelScope.launch {
+            doorsRepository.getAllDoorsLive().collect {
+                doors.clear()
+                doors.addAll(it)
             }
         }
     }
@@ -62,9 +72,21 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun onFavorite(cameraId: Int) {
+    fun onFavoriteCamera(cameraId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             camerasRepository.toggleFavorite(cameraId)
+        }
+    }
+
+    fun changeDoorName(doorModel: DoorModel, newName: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            doorsRepository.renameDoor(doorModel, newName)
+        }
+    }
+
+    fun onFavoriteDoor(doorId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            doorsRepository.toggleFavorite(doorId)
         }
     }
 }

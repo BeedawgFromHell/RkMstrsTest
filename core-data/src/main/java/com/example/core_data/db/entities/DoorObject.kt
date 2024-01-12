@@ -19,6 +19,7 @@ class DoorObject(): RealmObject {
         name = model.name
         favorites = model.favorites
         room = model.room
+        snapshotUrl = model.snapshotUrl
     }
 
     fun toModel() = DoorModel(
