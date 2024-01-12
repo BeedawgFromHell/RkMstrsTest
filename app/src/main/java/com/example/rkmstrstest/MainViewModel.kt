@@ -12,11 +12,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(
+class  MainViewModel @Inject constructor(
     private val camerasRepository: ICamerasRepository,
     private val doorsRepository: IDoorsRepository
 ) : ViewModel() {
     val errorMessage = mutableStateOf("")
+    val isRefreshing = mutableStateOf(false)
     val cameras
         get() = camerasRepository.getCamerasLive()
     val doors
@@ -30,6 +31,7 @@ class MainViewModel @Inject constructor(
 
     fun refreshData() {
         viewModelScope.launch(Dispatchers.IO) {
+            isRefreshing.value = true
             val cameraUpdate = async {
                 camerasRepository.update()
             }
@@ -40,6 +42,8 @@ class MainViewModel @Inject constructor(
             if (!cameraUpdate.await() || !doorUpdate.await()) {
                 errorMessage.value = "Ошибка в загрузке данных"
             }
+
+            isRefreshing.value = false
         }
     }
 }
