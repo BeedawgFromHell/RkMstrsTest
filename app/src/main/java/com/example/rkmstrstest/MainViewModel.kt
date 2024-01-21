@@ -23,34 +23,36 @@ class MainViewModel @Inject constructor(
     val errorMessage = mutableStateOf("")
     val isRefreshing = mutableStateOf(false)
 
-    val mappedCameras = mutableStateMapOf<String, MutableList<CameraModel>>()
-    val doors = mutableStateListOf<DoorModel>()
+    val mappedCamerasState = mutableStateMapOf<String, MutableList<CameraModel>>()
+    val doorsState = mutableStateListOf<DoorModel>()
 
     init {
         viewModelScope.launch {
-            if (camerasRepository.isEmpty() || doorsRepository.isEmpty()) refreshData()
+            if (camerasRepository.isEmpty() || doorsRepository.isEmpty()) {
+                refreshData()
+            }
+            updateLiveData()
         }
+    }
 
+    private fun updateLiveData() {
         viewModelScope.launch {
-            camerasRepository.getCamerasLive().collect { list ->
-                mappedCameras.clear()
-                list.forEach { camera ->
-                    if (camera.room != null) {
-                        if (mappedCameras[camera.room] == null) {
-                            mappedCameras[camera.room!!] = mutableListOf(camera)
-                        } else {
-                            mappedCameras[camera.room!!]?.add(camera)
-                        }
+            val cameras = camerasRepository.getCameras()
+            cameras.forEach { camera ->
+                if (camera.room != null) {
+                    if (mappedCamerasState[camera.room] == null) {
+                        mappedCamerasState[camera.room!!] = mutableListOf(camera)
+                    } else {
+                        mappedCamerasState[camera.room!!]?.add(camera)
                     }
                 }
             }
         }
 
         viewModelScope.launch {
-            doorsRepository.getAllDoorsLive().collect {
-                doors.clear()
-                doors.addAll(it)
-            }
+            val doors = doorsRepository.getAllDoors()
+            doorsState.clear()
+            doorsState.addAll(doors)
         }
     }
 
@@ -75,18 +77,21 @@ class MainViewModel @Inject constructor(
     fun onFavoriteCamera(cameraId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             camerasRepository.toggleFavorite(cameraId)
+            updateLiveData()
         }
     }
 
     fun changeDoorName(doorModel: DoorModel, newName: String) {
         viewModelScope.launch(Dispatchers.IO) {
             doorsRepository.renameDoor(doorModel, newName)
+            updateLiveData()
         }
     }
 
     fun onFavoriteDoor(doorId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             doorsRepository.toggleFavorite(doorId)
+            updateLiveData()
         }
     }
 }

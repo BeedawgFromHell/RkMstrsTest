@@ -1,60 +1,50 @@
 package com.example.core_data.repositories
 
-import com.example.core_data.db.entities.CameraObject
-import com.example.core_data.network.HttpClient
-import com.example.core_data.network.response_models.CameraResponseModel
+import com.example.core_data.datasources.db.ILocalDatasource
+import com.example.core_data.datasources.db.entities.CameraObject
+import com.example.core_data.datasources.network.INetworkDatasource
+import com.example.core_data.datasources.network.response_models.CameraResponseModel
 import com.example.core_domain.models.CameraModel
 import com.example.core_domain.repositories.ICamerasRepository
-import io.realm.kotlin.Realm
-import io.realm.kotlin.UpdatePolicy
-import io.realm.kotlin.ext.query
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class CamerasRepository @Inject constructor(
-    private val realm: Realm,
-    private val http: HttpClient
+    private val localDatasource: ILocalDatasource,
+    private val networkDatasource: INetworkDatasource
 ) : ICamerasRepository {
+
     override suspend fun isEmpty(): Boolean {
-        return realm.query<CameraObject>().find().isEmpty()
+        return localDatasource.camerasIsEmpty()
     }
 
     override suspend fun update(): Boolean {
-        val response = http.getCameras() ?: return false
-        val cameraModels = response.cameras.map(CameraResponseModel::toModel)
-
-        realm.writeBlocking {
-            this.delete(CameraObject::class)
-            cameraModels.map {
+        return withContext(Dispatchers.IO) {
+            val response = networkDatasource.getCameras() ?: return@withContext false
+            val cameraObjects = response.cameras.map(CameraResponseModel::toModel).map {
                 CameraObject(it)
-            }.forEach {
-                this.copyToRealm(it, UpdatePolicy.ALL)
             }
-        }
 
-        return true
+            localDatasource.insertCameras(cameraObjects)
+
+            return@withContext true
+        }
     }
 
     override suspend fun getCameras(): List<CameraModel> {
-        return realm.query<CameraObject>().find().map(CameraObject::toModel)
-    }
-
-    override fun getCamerasLive(): Flow<List<CameraModel>> {
-        return realm.query<CameraObject>().find().asFlow().map {
-            it.list.map(CameraObject::toModel)
+        return withContext(Dispatchers.IO) {
+            return@withContext localDatasource.getCameras().map(CameraObject::toModel)
         }
     }
 
     override suspend fun toggleFavorite(cameraId: Int) {
-        realm.writeBlocking {
-            query<CameraObject>()
-                .find()
-                .find {
-                    it.id == cameraId
-                }?.apply {
-                    favorites = !this.favorites
-                }
+        localDatasource.getCameras().find {
+            it.id == cameraId
+        }?.let { cameraObject->
+            localDatasource.update(cameraObject.apply {
+                favorites = !favorites
+            })
         }
     }
 }

@@ -1,7 +1,11 @@
 package com.example.core_data
 
-import com.example.core_data.db.entities.CameraObject
-import com.example.core_data.db.entities.DoorObject
+import com.example.core_data.datasources.db.ILocalDatasource
+import com.example.core_data.datasources.db.LocalDatasource
+import com.example.core_data.datasources.db.entities.CameraObject
+import com.example.core_data.datasources.db.entities.DoorObject
+import com.example.core_data.datasources.network.INetworkDatasource
+import com.example.core_data.datasources.network.NetworkDatasource
 import com.example.core_data.repositories.CamerasRepository
 import com.example.core_data.repositories.DoorsRepository
 import com.example.core_domain.repositories.ICamerasRepository
@@ -36,4 +40,10 @@ abstract class DataBindModule {
 
     @Binds
     abstract fun bindDoorsRepository(impl: DoorsRepository): IDoorsRepository
+
+    @Binds
+    abstract fun bindLocalDatasource(impl: LocalDatasource): ILocalDatasource
+
+    @Binds
+    abstract fun bindNetworkDatasource(impl: NetworkDatasource): INetworkDatasource
 }

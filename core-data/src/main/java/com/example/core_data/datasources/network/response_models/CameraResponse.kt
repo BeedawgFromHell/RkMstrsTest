@@ -1,4 +1,4 @@
-package com.example.core_data.network.response_models
+package com.example.core_data.datasources.network.response_models
 
 import com.example.core_domain.models.CameraModel
 import kotlinx.serialization.SerialName

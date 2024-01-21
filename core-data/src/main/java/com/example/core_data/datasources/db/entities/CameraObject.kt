@@ -1,4 +1,4 @@
-package com.example.core_data.db.entities
+package com.example.core_data.datasources.db.entities
 
 import com.example.core_domain.models.CameraModel
 import io.realm.kotlin.types.RealmObject

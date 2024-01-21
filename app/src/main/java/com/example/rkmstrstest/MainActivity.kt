@@ -48,9 +48,9 @@ class MainActivity : ComponentActivity() {
                 MainScreen(
                     isRefreshing = viewModel.isRefreshing,
                     onRefresh = viewModel::refreshData,
-                    camerasMappedWithRooms = viewModel.mappedCameras,
+                    camerasMappedWithRooms = viewModel.mappedCamerasState,
                     onFavoriteCamera = viewModel::onFavoriteCamera,
-                    doors = viewModel.doors,
+                    doors = viewModel.doorsState,
                     onFavoriteDoor = viewModel::onFavoriteDoor,
                     onDoorChangeName = viewModel::changeDoorName
                 )

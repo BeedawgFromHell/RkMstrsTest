@@ -1,9 +1,9 @@
-package com.example.core_data.network
+package com.example.core_data.datasources.network
 
 import android.util.Log
-import com.example.core_data.network.response_models.CamerasResponseModel
-import com.example.core_data.network.response_models.DefaultResponse
-import com.example.core_data.network.response_models.DoorResponseModel
+import com.example.core_data.datasources.network.response_models.CamerasResponseModel
+import com.example.core_data.datasources.network.response_models.DefaultResponse
+import com.example.core_data.datasources.network.response_models.DoorResponseModel
 import io.ktor.client.HttpClient
 import io.ktor.client.call.receive
 import io.ktor.client.engine.android.Android
